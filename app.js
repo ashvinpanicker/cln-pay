@@ -9,7 +9,6 @@ const port = 3000;
 
 // Import routes
 var indexRouter = require("./routes/website");
-var apiRouter = require("./routes/api");
 
 var app = express();
 
