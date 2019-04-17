@@ -31,11 +31,12 @@
                 <% for(let i=0;i < transactions.length; i++){ %>
                 <tr>
                     <td><%= transactions[i].time  %></td>
-                    <% if(transactions[i].type == 'receive') { %>
-                    <td style="color: green"><%= transactions[i].type  %></td>
-                    <% } else if(transactions[i].type == 'send') { %>
-                    <td style="color: red"><%= transactions[i].type  %></td>
-                    <% } %>
+                    <td><% if(transactions[i].type == 'receive') { %>
+                        <span style="color: green"><%= transactions[i].type %></span>
+                        <% } else if(transactions[i].type == 'send') { %>
+                        <span style="color: red"><%= transactions[i].type  %></span>
+                        <% } %>
+                    </td>
                     <td><%= transactions[i].amount  %></td>
                     <td><%= transactions[i].desc  %></td>
                 </tr>
