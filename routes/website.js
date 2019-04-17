@@ -7,9 +7,11 @@ var lightningPath = config.lightningPath;
 var _lightning = new lightning(lightningPath, true);
 
 router.get("/", async (req, res, next) => {
+    // Lightning Node Info
     let info = await _lightning.getinfo();
     let connectToNode = info.id + '@' + info.address[0].address + ':' + info.address[0].port;
 
+    // All Received and Paid money on the lightning network
     let { invoices } = await _lightning.listinvoices();
     let { payments } = await _lightning.listpayments();
     let transactions = [];
@@ -38,11 +40,21 @@ router.get("/", async (req, res, next) => {
             }
         });
 
+    // Get Node Balance 
+    let funds = await _lightning.listfunds();
+    let availableBalance = funds.outputs.forEach(output => {
+        availableFunds = availableFunds + output.value;
+    });
+    if(availableBalance < 0 || availableBalance == null) 
+        availableBalance = '0 msat';
+    else
+        availableBalance = availableBalance*1000 + ' msat';
+    // Render the Homescreen /views/home
     await res.render("home", {
         title: "Ashvin's Lightning Node ⚡️",
-        availableBalance: 0,
-        connectToNode,
         ...info,
+        connectToNode,
+        availableBalance,
         transactions
     });
 });
