@@ -1,21 +1,21 @@
 <div class="container">
-    <% if(error && error != -1) { %>
+        <% if(error && error != -1) { %>
         <div class="alert alert-danger"><%= error %></div>
-    <% } %>
-    <div class="jumbotron">
-        <h2>Send Lightning Network Payment</h1>
-            <form class="action-form" action="/decode" method="POST">
-                <div class="form-group">
-                    <label for="invoice">Paste a bolt 11 invoice:</label>
-                    <textarea required class="form-control" name="bolt11" rows="3" id="invoice"
-                        placeholder="lntb2u1pwtd2lypp58lckv6s3mwx0yc9lr6uuyud0gj80tuag5tmvh8gj9gy22revg75sdq9v9ekgxqr3jscqp2rzjqgfmhqlejlrxlfwjj46n078ay5qesgk4rxukfm4mpsmzn5kn4whmy9450yqqqrgqqqqqqqqpqqqqqzsqqcdhfx05ankngfzk8w0n0eqrcgekc2cmfp0578qg9wpf24ek367yqnqug67vsrz84vpe3krtm72sukczqk0pmrhhrsqpg0kpw6duhs84gpxyfkxr"></textarea>
-                </div>
-                <button style="margin-top: 20px" class="btn btn-lg btn-primary" type="submit" role="button">
-                    Decode Request
-                </button>
-            </form>
-    </div>
-    <% if(error == 0) { %>
+        <% } %>
+        <div class="jumbotron">
+            <h2>Send Lightning Network Payment</h1>
+                <form class="action-form" action="/decode" method="POST">
+                    <div class="form-group">
+                        <label for="invoice">Paste a bolt 11 invoice:</label>
+                        <textarea required class="form-control" name="bolt11" rows="3" id="invoice"
+                            placeholder="lntb2u1pwtd2lypp58lckv6s3mwx0yc9lr6uuyud0gj80tuag5tmvh8gj9gy22revg75sdq9v9ekgxqr3jscqp2rzjqgfmhqlejlrxlfwjj46n078ay5qesgk4rxukfm4mpsmzn5kn4whmy9450yqqqrgqqqqqqqqpqqqqqzsqqcdhfx05ankngfzk8w0n0eqrcgekc2cmfp0578qg9wpf24ek367yqnqug67vsrz84vpe3krtm72sukczqk0pmrhhrsqpg0kpw6duhs84gpxyfkxr"></textarea>
+                    </div>
+                    <button style="margin-top: 20px" class="btn btn-lg btn-primary" type="submit" role="button">
+                        Decode Request
+                    </button>
+                </form>
+        </div>
+        <% if(error == 0 && invoiceToPay.length > 1) { %>
         <div class="panel panel-info">
             <div class="panel-heading">
                 <h3 class="panel-title">Confirm Payment?</h3>
@@ -30,17 +30,16 @@
             </div>
             <div class="panel-footer">
                 <form action="/pay" method="POST">
-                <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                    <div class="btn-group" role="group">
-                        <a href="/" class="btn btn-default">Cancel</button>
+                    <div class="row">
+                        <div class="col-md-6"><a href="/" class="btn btn-default btn-block" role="button">Cancel</a></div>
+                        <div class="col-md-6"><button type="submit" class="btn btn-success btn-block">Confirm</button></div>
                     </div>
-                    <div class="btn-group" role="group">
-                        <button type="submit" class="btn btn-success">Confirm</button>
-                        <textarea name="bolt11" style="visibility: hidden"><%= invoiceToPay %></textarea>
-                    </div>
-                </div>
+                    <input type="hidden" name="bolt11" style="display: none" id="hiddenInput"></input>
                 </form>
             </div>
         </div>
+    </div>
+    <script>
+        document.getElementById("hiddenInput").value = "<%= invoiceToPay %>";
+    </script>
     <% } %>
-</div>

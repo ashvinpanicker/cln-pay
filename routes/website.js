@@ -108,10 +108,10 @@ router.post('/pay', async (req, res) => {
         _lightning.pay(invoiceToPay)
             .then(paid => {
                 let error = 0;
+                console.log("here", paid)
                 if (decoded.currency != 'tb') error = 'Please paste a valid testnet lightning payment request!';
                 else if (decoded.amount_msat > availableBalance) error = 'Not enough funds!';
                 else error = -143;
-                console.log("here", paid)
                 res.render("send", {
                     title: config.owner + "'s Lightning Node ⚡️",
                     availableBalance,
@@ -138,9 +138,9 @@ async function getTransactions() {
     if (invoices)
         invoices.map(invoice => {
             transactions.push({
-                time: utils.timeConverter(invoice.paid_at),
+                time: utils.timeConverter(invoice.expires_at),
                 type: 'received',
-                amount: invoice.amount_received_msat,
+                amount: invoice.amount_msat,
                 desc: invoice.description
             });
         });
@@ -148,7 +148,7 @@ async function getTransactions() {
     if (payments)
         payments.map(payment => {
             transactions.push({
-                time: utils.timeConverter(payment.paid_at),
+                time: utils.timeConverter(payment.created_at),
                 type: 'sent',
                 amount: payment.amount_sent_msat,
                 desc: payment.description
