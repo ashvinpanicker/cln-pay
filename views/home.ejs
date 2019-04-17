@@ -32,8 +32,8 @@
                 <tr>
                     <td><%= transactions[i].time  %></td>
                     <% if(transactions[i].type == 'receive') { %>
-                    <td><%= transactions[i].type  %></td>
-                    <% } else if(transactions[i].type == 'send') %>
+                    <td style="color: green"><%= transactions[i].type  %></td>
+                    <% } else if(transactions[i].type == 'send') { %>
                     <td style="color: red"><%= transactions[i].type  %></td>
                     <% } %}
                     <td><%= transactions[i].amount  %></td>
