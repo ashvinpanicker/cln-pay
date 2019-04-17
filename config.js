@@ -1,3 +1,3 @@
 module.exports = {
-  lightningPath: "/root/.lightning"
+  lightningPath: "/home/lastbit/Bitcoin/.lightning"
 };

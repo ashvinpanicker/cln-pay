@@ -14,10 +14,10 @@ var app = express();
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
+app.use(express.static(__dirname + '/public'));
 // App Routes
 app.use("/api", apiRouter);
-// app.use("/", indexRouter);
+app.use("/", indexRouter);
 
 app.set('port', port);
 app.set("views", path.join(__dirname, "views"));

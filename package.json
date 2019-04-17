@@ -8,6 +8,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "ejs": "^2.6.1",
     "express": "~4.16.0",
     "lightning-client": "^0.5.2-beta.8",
     "morgan": "^1.9.1"
