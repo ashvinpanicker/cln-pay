@@ -1,4 +1,4 @@
 module.exports = {
   owner: "Ashvin",
-  lightningPath: "/home/lastbit/Bitcoin/.lightning"
+  lightningPath: "/home/ubuntu/.lightning"
 };

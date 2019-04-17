@@ -20,7 +20,6 @@ app.use(express.static(__dirname + '/public'));
 app.use(layouts);
 app.use(bodyParser.urlencoded({ extended: false }))
 // App Routes
-app.use("/api", apiRouter);
 app.use("/", indexRouter);
 
 app.set('port', port);
