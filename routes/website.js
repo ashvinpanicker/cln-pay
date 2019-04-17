@@ -51,7 +51,7 @@ router.get("/", async (req, res) => {
         availableBalance = availableBalance * 1000 + ' msat';
     // Render the Homescreen /views/home
     res.render("home", {
-        title: config.owner + "'s Lightning Node ⚡️",
+        title: config.owner + "'s Lightning Node",
         ...info,
         connectToNode,
         availableBalance,
