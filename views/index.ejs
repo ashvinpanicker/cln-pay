@@ -35,7 +35,7 @@
                   </li>
                 </ul> -->
                 <ul class="nav navbar-nav navbar-right">
-                  <li><a href="../navbar/">Balance=<%= availableBalance %></a></li>
+                  <li><a href="#">Balance=<%= availableBalance %></a></li>
                 </ul>
               </div><!--/.nav-collapse -->
             </div>
@@ -50,7 +50,7 @@
               <p>Connected Nodes: <%= num_peers %></p>
               <p>Pending Channels: <%= num_pending_channels %></p>
               <p>Active Channels: <%= num_active_channels %></p>
-              <p>Fees Collected: <%= feesInSatoshis %></p>
+              <p>Fees Collected: <%= fees_collected_msat %></p>
               <p>Connect to Node: <%= connectToNode %></p>
               <p>
                 <a class="btn btn-lg btn-primary" href="/pay" role="button">Make payment &raquo;</a>
@@ -58,6 +58,14 @@
             </div>
       
         </div>
+        <div class="container">
+        </div>
+        <script src="/scripts/jquery.min.js"></script>
         <script src="/scripts/bootstrap.min.js"></script>
+        <script>
+            jQuery(document).ready(function(){
+                alert("hi")
+            })
+        </script>
     </body>
 </html>
