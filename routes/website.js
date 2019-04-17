@@ -11,43 +11,9 @@ router.get("/", async (req, res) => {
     let info = await _lightning.getinfo();
     let connectToNode = info.id + '@' + info.address[0].address + ':' + info.address[0].port;
 
-    // All Received and Paid money on the lightning network
-    let { invoices } = await _lightning.listinvoices();
-    let { payments } = await _lightning.listpayments();
-    let transactions = [];
+    let transactions = await getTransactions();
+    let availableBalance = await getNodeBalance();
 
-    if (invoices)
-        invoices.map(invoice => {
-            if (invoice.status == "paid") {
-                transactions.push({
-                    time: utils.timeConverter(invoice.paid_at),
-                    type: 'received',
-                    amount: invoice.amount_received_msat,
-                    desc: invoice.description
-                });
-            }
-        });
-
-    if (payments)
-        payments.map(payment => {
-            if (payment.status == "paid") {
-                transactions.push({
-                    time: utils.timeConverter(payment.paid_at),
-                    type: 'sent',
-                    amount: payment.amount_sent_msat,
-                    desc: payment.description
-                });
-            }
-        });
-
-    // Get Node Balance 
-    let funds = await _lightning.listfunds();
-    let availableBalance = 0;
-    funds.outputs.forEach(output => {
-        availableBalance += output.value;
-    });
-    if (availableBalance < 0 || availableBalance == null)
-        availableBalance = 0;
     // Render the Homescreen /views/home
     res.render("home", {
         title: config.owner + "'s Lightning Node",
@@ -59,14 +25,7 @@ router.get("/", async (req, res) => {
 });
 
 router.get('/receive', async (req, res) => {
-    // Get Node Balance 
-    let funds = await _lightning.listfunds();
-    let availableBalance = 0;
-    funds.outputs.forEach(output => {
-        availableBalance += output.value;
-    });
-    if (availableBalance < 0 || availableBalance == null)
-        availableBalance = 0;
+    let availableBalance = await getNodeBalance();
     res.render("receive", {
         title: config.owner + "'s Lightning Node ⚡️",
         availableBalance,
@@ -76,15 +35,8 @@ router.get('/receive', async (req, res) => {
 });
 
 router.post('/receive', async (req, res) => {
-    // Get Node Balance 
-    let funds = await _lightning.listfunds();
-    let availableBalance = 0;
-    funds.outputs.forEach(output => {
-        availableBalance += output.value;
-    });
-    if (availableBalance < 0 || availableBalance == null)
-        availableBalance = 0;
 
+    let availableBalance = await getNodeBalance();
     let { amount, desc } = req.body;
     let message = -1;
     let bolt11 = -1;
@@ -109,31 +61,18 @@ router.post('/receive', async (req, res) => {
 });
 
 router.get('/send', async (req, res) => {
-    // Get Node Balance 
-    let funds = await _lightning.listfunds();
-    let availableBalance = 0;
-    funds.outputs.forEach(output => {
-        availableBalance += output.value;
-    });
-    if (availableBalance < 0 || availableBalance == null)
-        availableBalance = 0;
+    let availableBalance = await getNodeBalance();
     res.render("send", {
         title: config.owner + "'s Lightning Node ⚡️",
         availableBalance,
+        invoiceToPay: 0,
         error: -1
     });
 });
 
 router.post('/decode', async (req, res) => {
-    // Get Node Balance 
-    let funds = await _lightning.listfunds();
-    let availableBalance = 0;
-    funds.outputs.forEach(output => {
-        availableBalance += output.value;
-    });
-    if (availableBalance < 0 || availableBalance == null)
-        availableBalance = 0;
 
+    let availableBalance = await getNodeBalance();
     let invoiceToPay = req.body.bolt11;
     if (invoiceToPay) {
         _lightning.decodepay(invoiceToPay)
@@ -161,38 +100,74 @@ router.post('/decode', async (req, res) => {
 });
 
 router.post('/pay', async (req, res) => {
-    // Get Node Balance 
-    let funds = await _lightning.listfunds();
-    let availableBalance = 0;
-    funds.outputs.forEach(output => {
-        availableBalance += output.value;
-    });
-    if (availableBalance < 0 || availableBalance == null)
-        availableBalance = 0;
+
+    let availableBalance = await getNodeBalance();
 
     let invoiceToPay = req.body.bolt11;
     if (invoiceToPay) {
         _lightning.pay(invoiceToPay)
             .then(paid => {
                 let error = 0;
-                console.log(paid);
                 if (decoded.currency != 'tb') error = 'Please paste a valid testnet lightning payment request!';
-                if (decoded.amount_msat > availableBalance) error = 'Not enough funds!';
-                console.log(error)
-                res.render("home", {
+                else if (decoded.amount_msat > availableBalance) error = 'Not enough funds!';
+                else error = -143;
+                console.log("here", paid)
+                res.render("send", {
                     title: config.owner + "'s Lightning Node ⚡️",
                     availableBalance,
-                    error
+                    error,
+                    invoiceToPay: 0,
                 });
             })
             .catch(error => {
-                res.render("home", {
+                res.render("send", {
                     title: config.owner + "'s Lightning Node ⚡️",
                     availableBalance,
-                    error: 'Please paste a valid testnet lightning payment request!'
+                    error: 'Please paste a valid testnet lightning payment request!',
                 });
             });
     }
 });
+
+async function getTransactions() {
+    // All Received and Paid money on the lightning network
+    let { invoices } = await _lightning.listinvoices();
+    let { payments } = await _lightning.listpayments();
+    let transactions = [];
+
+    if (invoices)
+        invoices.map(invoice => {
+            transactions.push({
+                time: utils.timeConverter(invoice.paid_at),
+                type: 'received',
+                amount: invoice.amount_received_msat,
+                desc: invoice.description
+            });
+        });
+
+    if (payments)
+        payments.map(payment => {
+            transactions.push({
+                time: utils.timeConverter(payment.paid_at),
+                type: 'sent',
+                amount: payment.amount_sent_msat,
+                desc: payment.description
+            });
+        });
+
+    return transactions;
+}
+
+async function getNodeBalance() {
+    // Get Node Balance 
+    let availableBalance = 0;
+    let funds = await _lightning.listfunds();
+    funds.outputs.forEach(output => {
+        availableBalance += output.value;
+    });
+    if (availableBalance < 0 || availableBalance == null)
+        availableBalance = 0;
+    return availableBalance;
+}
 
 module.exports = router;
