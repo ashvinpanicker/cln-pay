@@ -1,22 +1,29 @@
 <div class="container">
+    <% if(message !== -1) { %>
+    <div class="alert alert-danger"><%= message %></div>
+    <% } %>
     <div class="jumbotron">
-        <h2>Receive Lightning Network Payment</h1>
-            <div style="margin-top: 40px" class="form-group">
+        <h2>Receive Lightning Network Payment</h2>
+        <form action="/receive" method="POST">
+            <div class="form-group action-form">
                 <label for="amount">Amount (msat): </label>
-                <input type="text" class="form-control" id="amount" placeholder="48232">
+                <input type="text" class="form-control" required name="amount" id="amount" placeholder="48232">
             </div>
             <div class="form-group">
                 <label for="desc">Description:</label>
-                <input type="password" class="form-control" id="desc"
-                    placeholder="You owe me for eating all my Paneer butter masala!">
+                <input type="text" class="form-control" id="desc" name="desc"
+                    placeholder="You owe me for eating all my paneer butter masala! (optional note)">
             </div>
-            <button style="margin-top: 20px" class="btn btn-lg btn-primary" onclick="addInvoice()" role="button">
+            <button class="btn btn-lg btn-primary action-btn" type="submit" role="button">
                 Request Payment
             </button>
+        </form>
+        <% if(bolt11 != -1) { %>
+        <div class="container">
+            <h1>Bolt11 Invoice</h1>
+            <textarea class="form-control new-invoice" rows="2" readonly><%= bolt11 %></textarea>
+            <p>This invoice can be paid by another lightning wallet app or node</p>
+        </div>
+        <% } %>
     </div>
 </div>
-<script>
-    function addInvoice() {
-        alert("hi");
-    }
-</script>

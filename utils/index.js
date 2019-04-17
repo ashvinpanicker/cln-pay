@@ -11,6 +11,19 @@ const timeConverter = function (UNIX_timestamp) {
     return time;
 }
 
+const getUniqueLabel = function () {
+    // Of a fair enough entropy :P
+    let label = "";
+    let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (let i = 0; i < 10; i++) {
+        label += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    let date = + new Date();
+    label = label + date;
+    return label;
+}
+
 module.exports = {
-    timeConverter
+    timeConverter,
+    getUniqueLabel
 }

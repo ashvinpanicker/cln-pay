@@ -83,7 +83,41 @@ router.get('/receive', async (req, res) => {
         availableBalance = '0 msat';
     res.render("receive", {
         title: config.owner + "'s Lightning Node ⚡️",
-        availableBalance
+        availableBalance,
+        bolt11: -1,
+        message: -1
+    });
+});
+
+router.post('/receive', async (req, res) => {
+    // Get Node Balance 
+    let funds = await _lightning.listfunds();
+    let availableBalance = funds.outputs.forEach(output => {
+        availableFunds = availableFunds + output.value;
+    });
+    if (availableBalance < 0 || availableBalance == null)
+        availableBalance = '0 msat';
+
+    let { amount, desc } = req.body;
+    let message = -1;
+    let bolt11 = -1;
+    
+    if (amount < 1000 || amount >= 400000000)
+        message = "Amount must be greater than 1000 msat and less than 400000000 msat";
+    else if (!amount || amount == null)
+        message = "Amount is required!";
+    else {
+        if (desc == null) desc = ''
+        let uniqueLabel = utils.getUniqueLabel()
+        let invoice = await _lightning.invoice(amount, uniqueLabel, desc);
+        bolt11 = invoice.bolt11;
+    }
+
+    res.render("receive", {
+        title: config.owner + "'s Lightning Node ⚡️",
+        availableBalance,
+        bolt11,
+        message
     });
 });
 
