@@ -6,7 +6,7 @@ var config = require("../config");
 var lightningPath = config.lightningPath;
 var _lightning = new lightning(lightningPath, true);
 
-router.get("/", async (req, res, next) => {
+router.get("/", async (req, res) => {
     // Lightning Node Info
     let info = await _lightning.getinfo();
     let connectToNode = info.id + '@' + info.address[0].address + ':' + info.address[0].port;
@@ -50,13 +50,27 @@ router.get("/", async (req, res, next) => {
     else
         availableBalance = availableBalance*1000 + ' msat';
     // Render the Homescreen /views/home
-    await res.render("home", {
-        title: "Ashvin's Lightning Node ⚡️",
+    res.render("home", {
+        title: config.owner + "'s Lightning Node ⚡️",
         ...info,
         connectToNode,
         availableBalance,
         transactions
     });
 });
+
+router.get('/pay', async (req, res) => {
+        // Get Node Balance 
+        let funds = await _lightning.listfunds();
+        let availableBalance = funds.outputs.forEach(output => {
+            availableFunds = availableFunds + output.value;
+        });
+        if(availableBalance < 0 || availableBalance == null) 
+            availableBalance = '0 msat';
+    res.render("pay", {
+        title: config.owner + "'s Lightning Node ⚡️",
+        availableBalance
+    });
+})
 
 module.exports = router;

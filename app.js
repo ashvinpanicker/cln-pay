@@ -2,7 +2,7 @@ var express = require("express");
 var path = require("path");
 var logger = require("morgan");
 var http = require('http');
-
+var layouts = require('express-ejs-layouts');
 const port = 3000;
 
 // Import routes
@@ -15,6 +15,7 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
+app.use(layouts);
 // App Routes
 app.use("/api", apiRouter);
 app.use("/", indexRouter);
