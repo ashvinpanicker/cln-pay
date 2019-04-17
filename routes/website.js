@@ -46,9 +46,7 @@ router.get("/", async (req, res) => {
         availableFunds = availableFunds + output.value;
     });
     if (availableBalance < 0 || availableBalance == null)
-        availableBalance = '0 msat';
-    else
-        availableBalance = availableBalance * 1000 + ' msat';
+        availableBalance = 0;
     // Render the Homescreen /views/home
     res.render("home", {
         title: config.owner + "'s Lightning Node",
@@ -59,20 +57,6 @@ router.get("/", async (req, res) => {
     });
 });
 
-router.get('/send', async (req, res) => {
-    // Get Node Balance 
-    let funds = await _lightning.listfunds();
-    let availableBalance = funds.outputs.forEach(output => {
-        availableFunds = availableFunds + output.value;
-    });
-    if (availableBalance < 0 || availableBalance == null)
-        availableBalance = '0 msat';
-    res.render("send", {
-        title: config.owner + "'s Lightning Node ⚡️",
-        availableBalance
-    });
-});
-
 router.get('/receive', async (req, res) => {
     // Get Node Balance 
     let funds = await _lightning.listfunds();
@@ -80,7 +64,7 @@ router.get('/receive', async (req, res) => {
         availableFunds = availableFunds + output.value;
     });
     if (availableBalance < 0 || availableBalance == null)
-        availableBalance = '0 msat';
+        availableBalance = 0;
     res.render("receive", {
         title: config.owner + "'s Lightning Node ⚡️",
         availableBalance,
@@ -96,12 +80,12 @@ router.post('/receive', async (req, res) => {
         availableFunds = availableFunds + output.value;
     });
     if (availableBalance < 0 || availableBalance == null)
-        availableBalance = '0 msat';
+        availableBalance = 0;
 
     let { amount, desc } = req.body;
     let message = -1;
     let bolt11 = -1;
-    
+
     if (amount < 1000 || amount >= 400000000)
         message = "Amount must be greater than 1000 msat and less than 400000000 msat";
     else if (!amount || amount == null)
@@ -119,6 +103,89 @@ router.post('/receive', async (req, res) => {
         bolt11,
         message
     });
+});
+
+router.get('/send', async (req, res) => {
+    // Get Node Balance 
+    let funds = await _lightning.listfunds();
+    let availableBalance = funds.outputs.forEach(output => {
+        availableFunds = availableFunds + output.value;
+    });
+    if (availableBalance < 0 || availableBalance == null)
+        availableBalance = 0;
+    res.render("send", {
+        title: config.owner + "'s Lightning Node ⚡️",
+        availableBalance,
+        error: -1
+    });
+});
+
+router.post('/decode', async (req, res) => {
+    // Get Node Balance 
+    let funds = await _lightning.listfunds();
+    let availableBalance = funds.outputs.forEach(output => {
+        availableFunds = availableFunds + output.value;
+    });
+    if (availableBalance < 0 || availableBalance == null)
+        availableBalance = 0;
+
+    let invoiceToPay = req.body.bolt11;
+    if (invoiceToPay) {
+        _lightning.decodepay(invoiceToPay)
+            .then(decoded => {
+                let error = 0;
+                if (decoded.currency != 'tb') error = 'Please paste a valid testnet lightning payment request!';
+                if (decoded.msatoshi > availableBalance) error = 'Not enough funds to pay this invoice :( \n\nInvoice amount = ' + decoded.amount_msat + '\nnYour Balance = ' + availableBalance + 'msat';
+                console.log(error)
+                    res.render("send", {
+                        title: config.owner + "'s Lightning Node ⚡️",
+                        availableBalance,
+                        ...decoded,
+                        error
+                    });
+            })
+            .catch(error => {
+                res.render("send", {
+                    title: config.owner + "'s Lightning Node ⚡️",
+                    availableBalance,
+                    error: 'Please paste a valid testnet lightning payment request!'
+                });
+            });
+    }
+});
+
+router.post('/pay', async (req, res) => {
+    // Get Node Balance 
+    let funds = await _lightning.listfunds();
+    let availableBalance = funds.outputs.forEach(output => {
+        availableFunds = availableFunds + output.value;
+    });
+    if (availableBalance < 0 || availableBalance == null)
+        availableBalance = 0;
+
+    let invoiceToPay = req.body.bolt11;
+    if (invoiceToPay) {
+        _lightning.decodepay(invoiceToPay)
+            .then(decoded => {
+                let error = 0;
+                if (decoded.currency != 'tb') error = 'Please paste a valid testnet lightning payment request!';
+                if (decoded.amount_msat > availableBalance) error = 'Not enough funds!';
+                console.log(error)
+                res.render("send", {
+                    title: config.owner + "'s Lightning Node ⚡️",
+                    availableBalance,
+                    ...decoded,
+                    error
+                });
+            })
+            .catch(error => {
+                res.render("send", {
+                    title: config.owner + "'s Lightning Node ⚡️",
+                    availableBalance,
+                    error: 'Please paste a valid testnet lightning payment request!'
+                });
+            });
+    }
 });
 
 module.exports = router;

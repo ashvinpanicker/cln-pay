@@ -1,20 +1,43 @@
 <div class="container">
+    <% if(error && error != -1) { %>
+        <div class="alert alert-danger"><%= error %></div>
+    <% } %>
     <div class="jumbotron">
         <h2>Send Lightning Network Payment</h1>
-            <form class="action-form" action="" method="">
-            <div class="form-group">
-                <label for="invoice">Paste a bolt 11 invoice:</label>
-                <textarea class="form-control" rows="4" id="invoice" placeholder="lntb2u1pwtd2lypp58lckv6s3mwx0yc9lr6uuyud0gj80tuag5tmvh8gj9gy22revg75sdq9v9ekgxqr3jscqp2rzjqgfmhqlejlrxlfwjj46n078ay5qesgk4rxukfm4mpsmzn5kn4whmy9450yqqqrgqqqqqqqqpqqqqqzsqqcdhfx05ankngfzk8w0n0eqrcgekc2cmfp0578qg9wpf24ek367yqnqug67vsrz84vpe3krtm72sukczqk0pmrhhrsqpg0kpw6duhs84gpxyfkxr"></textarea>
-            </div>
-            <button style="margin-top: 20px" class="btn btn-lg btn-primary" onclick="decodeInvoice()" role="button">
-                Decode Request
-            </button>
-        </form>
+            <form class="action-form" action="/decode" method="POST">
+                <div class="form-group">
+                    <label for="invoice">Paste a bolt 11 invoice:</label>
+                    <textarea required class="form-control" name="bolt11" rows="3" id="invoice"
+                        placeholder="lntb2u1pwtd2lypp58lckv6s3mwx0yc9lr6uuyud0gj80tuag5tmvh8gj9gy22revg75sdq9v9ekgxqr3jscqp2rzjqgfmhqlejlrxlfwjj46n078ay5qesgk4rxukfm4mpsmzn5kn4whmy9450yqqqrgqqqqqqqqpqqqqqzsqqcdhfx05ankngfzk8w0n0eqrcgekc2cmfp0578qg9wpf24ek367yqnqug67vsrz84vpe3krtm72sukczqk0pmrhhrsqpg0kpw6duhs84gpxyfkxr"></textarea>
+                </div>
+                <button style="margin-top: 20px" class="btn btn-lg btn-primary" type="submit" role="button">
+                    Decode Request
+                </button>
+            </form>
     </div>
+    <% if(error == 0) { %>
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">Confirm Payment?</h3>
+            </div>
+            <div class="panel-body">
+                <ul>
+                    <li>Amount: <%= amount_msat %></li>
+                    <li>Description: <%= description %></li>
+                    <li>Expires in: <%= expiry %> seconds</li>
+                    <li>Payment hash: <%= payment_hash %></li>
+                </ul>
+            </div>
+            <div class="panel-footer">
+                <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-default">Cancel</button>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-success">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% } %>
 </div>
-<script>
-    function decodeInvoice() {
-        alert("hi");
-
-    }
-</script>
