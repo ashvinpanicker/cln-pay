@@ -1,0 +1,22 @@
+<div class="container">
+    <div class="jumbotron">
+        <h2>Receive Lightning Network Payment</h1>
+            <div style="margin-top: 40px" class="form-group">
+                <label for="amount">Amount (msat): </label>
+                <input type="text" class="form-control" id="amount" placeholder="48232">
+            </div>
+            <div class="form-group">
+                <label for="desc">Description:</label>
+                <input type="password" class="form-control" id="desc"
+                    placeholder="You owe me for eating all my Paneer butter masala!">
+            </div>
+            <button style="margin-top: 20px" class="btn btn-lg btn-primary" onclick="addInvoice()" role="button">
+                Request Payment
+            </button>
+    </div>
+</div>
+<script>
+    function addInvoice() {
+        alert("hi");
+    }
+</script>

@@ -45,10 +45,10 @@ router.get("/", async (req, res) => {
     let availableBalance = funds.outputs.forEach(output => {
         availableFunds = availableFunds + output.value;
     });
-    if(availableBalance < 0 || availableBalance == null) 
+    if (availableBalance < 0 || availableBalance == null)
         availableBalance = '0 msat';
     else
-        availableBalance = availableBalance*1000 + ' msat';
+        availableBalance = availableBalance * 1000 + ' msat';
     // Render the Homescreen /views/home
     res.render("home", {
         title: config.owner + "'s Lightning Node ⚡️",
@@ -59,18 +59,32 @@ router.get("/", async (req, res) => {
     });
 });
 
-router.get('/pay', async (req, res) => {
-        // Get Node Balance 
-        let funds = await _lightning.listfunds();
-        let availableBalance = funds.outputs.forEach(output => {
-            availableFunds = availableFunds + output.value;
-        });
-        if(availableBalance < 0 || availableBalance == null) 
-            availableBalance = '0 msat';
-    res.render("pay", {
+router.get('/send', async (req, res) => {
+    // Get Node Balance 
+    let funds = await _lightning.listfunds();
+    let availableBalance = funds.outputs.forEach(output => {
+        availableFunds = availableFunds + output.value;
+    });
+    if (availableBalance < 0 || availableBalance == null)
+        availableBalance = '0 msat';
+    res.render("send", {
         title: config.owner + "'s Lightning Node ⚡️",
         availableBalance
     });
-})
+});
+
+router.get('/receive', async (req, res) => {
+    // Get Node Balance 
+    let funds = await _lightning.listfunds();
+    let availableBalance = funds.outputs.forEach(output => {
+        availableFunds = availableFunds + output.value;
+    });
+    if (availableBalance < 0 || availableBalance == null)
+        availableBalance = '0 msat';
+    res.render("receive", {
+        title: config.owner + "'s Lightning Node ⚡️",
+        availableBalance
+    });
+});
 
 module.exports = router;
