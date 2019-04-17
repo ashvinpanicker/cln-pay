@@ -45,13 +45,13 @@
       
             <div class="jumbotron">
               <h1><%= title %></h1>
-              <p>Display info here</p>
-              <p>More info</p>
-              <p>More info</p>
-              <p>More info</p>
-              <p>More info</p>
-              <p>More info</p>
-              <p>More info</p>
+              <p>Node ID: <%= id %></p>
+              <p>Network: <%= network %></p>
+              <p>Connected Nodes: <%= num_peers %></p>
+              <p>Pending Channels: <%= num_pending_channels %></p>
+              <p>Active Channels: <%= num_active_channels %></p>
+              <p>Fees Collected: <%= feesInSatoshis %></p>
+              <p>Connect to Node: <%= connectToNode %></p>
               <p>
                 <a class="btn btn-lg btn-primary" href="/pay" role="button">Make payment &raquo;</a>
               </p>
