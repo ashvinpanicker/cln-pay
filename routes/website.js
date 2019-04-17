@@ -38,7 +38,7 @@ router.get("/", async (req, res, next) => {
             }
         });
 
-    await res.render("index", {
+    await res.render("home", {
         title: "Ashvin's Lightning Node ⚡️",
         availableBalance: 0,
         connectToNode,
