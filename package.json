@@ -1,0 +1,15 @@
+{
+  "name": "cln-demo-app",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "express": "~4.16.0",
+    "lightning-client": "^0.5.2-beta.8",
+    "morgan": "^1.9.1"
+  }
+}
