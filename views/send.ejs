@@ -29,14 +29,17 @@
                 </ul>
             </div>
             <div class="panel-footer">
+                <form action="/pay" method="POST">
                 <div class="btn-group btn-group-justified" role="group" aria-label="...">
                     <div class="btn-group" role="group">
-                        <button class="btn btn-default">Cancel</button>
+                        <a href="/" class="btn btn-default">Cancel</button>
                     </div>
                     <div class="btn-group" role="group">
-                        <button class="btn btn-success">Confirm</button>
+                        <button type="submit" class="btn btn-success">Confirm</button>
+                        <textarea name="bolt11" style="visibility: hidden"><%= invoiceToPay %></textarea>
                     </div>
                 </div>
+                </form>
             </div>
         </div>
     <% } %>

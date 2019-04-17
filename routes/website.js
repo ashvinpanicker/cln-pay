@@ -135,12 +135,13 @@ router.post('/decode', async (req, res) => {
             .then(decoded => {
                 let error = 0;
                 if (decoded.currency != 'tb') error = 'Please paste a valid testnet lightning payment request!';
-                if (decoded.msatoshi > availableBalance) error = 'Not enough funds to pay this invoice :( \n\nInvoice amount = ' + decoded.amount_msat + '\nnYour Balance = ' + availableBalance + 'msat';
+                if (decoded.msatoshi > availableBalance) error = 'Not enough funds to pay invoice amount ' + decoded.amount_msat;
                 console.log(error)
                     res.render("send", {
                         title: config.owner + "'s Lightning Node ⚡️",
                         availableBalance,
                         ...decoded,
+                        invoiceToPay,
                         error
                     });
             })
@@ -165,21 +166,21 @@ router.post('/pay', async (req, res) => {
 
     let invoiceToPay = req.body.bolt11;
     if (invoiceToPay) {
-        _lightning.decodepay(invoiceToPay)
-            .then(decoded => {
+        _lightning.pay(invoiceToPay)
+            .then(paid => {
                 let error = 0;
+                console.log(paid);
                 if (decoded.currency != 'tb') error = 'Please paste a valid testnet lightning payment request!';
                 if (decoded.amount_msat > availableBalance) error = 'Not enough funds!';
                 console.log(error)
-                res.render("send", {
+                res.render("home", {
                     title: config.owner + "'s Lightning Node ⚡️",
                     availableBalance,
-                    ...decoded,
                     error
                 });
             })
             .catch(error => {
-                res.render("send", {
+                res.render("home", {
                     title: config.owner + "'s Lightning Node ⚡️",
                     availableBalance,
                     error: 'Please paste a valid testnet lightning payment request!'
