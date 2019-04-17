@@ -42,8 +42,9 @@ router.get("/", async (req, res) => {
 
     // Get Node Balance 
     let funds = await _lightning.listfunds();
-    let availableBalance = funds.outputs.forEach(output => {
-        availableFunds = availableFunds + output.value;
+    let availableBalance = 0;
+    funds.outputs.forEach(output => {
+        availableBalance += output.value;
     });
     if (availableBalance < 0 || availableBalance == null)
         availableBalance = 0;
@@ -60,8 +61,9 @@ router.get("/", async (req, res) => {
 router.get('/receive', async (req, res) => {
     // Get Node Balance 
     let funds = await _lightning.listfunds();
-    let availableBalance = funds.outputs.forEach(output => {
-        availableFunds = availableFunds + output.value;
+    let availableBalance = 0;
+    funds.outputs.forEach(output => {
+        availableBalance += output.value;
     });
     if (availableBalance < 0 || availableBalance == null)
         availableBalance = 0;
@@ -76,8 +78,9 @@ router.get('/receive', async (req, res) => {
 router.post('/receive', async (req, res) => {
     // Get Node Balance 
     let funds = await _lightning.listfunds();
-    let availableBalance = funds.outputs.forEach(output => {
-        availableFunds = availableFunds + output.value;
+    let availableBalance = 0;
+    funds.outputs.forEach(output => {
+        availableBalance += output.value;
     });
     if (availableBalance < 0 || availableBalance == null)
         availableBalance = 0;
@@ -108,8 +111,9 @@ router.post('/receive', async (req, res) => {
 router.get('/send', async (req, res) => {
     // Get Node Balance 
     let funds = await _lightning.listfunds();
-    let availableBalance = funds.outputs.forEach(output => {
-        availableFunds = availableFunds + output.value;
+    let availableBalance = 0;
+    funds.outputs.forEach(output => {
+        availableBalance += output.value;
     });
     if (availableBalance < 0 || availableBalance == null)
         availableBalance = 0;
@@ -123,8 +127,9 @@ router.get('/send', async (req, res) => {
 router.post('/decode', async (req, res) => {
     // Get Node Balance 
     let funds = await _lightning.listfunds();
-    let availableBalance = funds.outputs.forEach(output => {
-        availableFunds = availableFunds + output.value;
+    let availableBalance = 0;
+    funds.outputs.forEach(output => {
+        availableBalance += output.value;
     });
     if (availableBalance < 0 || availableBalance == null)
         availableBalance = 0;
@@ -137,13 +142,13 @@ router.post('/decode', async (req, res) => {
                 if (decoded.currency != 'tb') error = 'Please paste a valid testnet lightning payment request!';
                 if (decoded.msatoshi > availableBalance) error = 'Not enough funds to pay invoice amount ' + decoded.amount_msat;
                 console.log(error)
-                    res.render("send", {
-                        title: config.owner + "'s Lightning Node ⚡️",
-                        availableBalance,
-                        ...decoded,
-                        invoiceToPay,
-                        error
-                    });
+                res.render("send", {
+                    title: config.owner + "'s Lightning Node ⚡️",
+                    availableBalance,
+                    ...decoded,
+                    invoiceToPay,
+                    error
+                });
             })
             .catch(error => {
                 res.render("send", {
@@ -158,8 +163,9 @@ router.post('/decode', async (req, res) => {
 router.post('/pay', async (req, res) => {
     // Get Node Balance 
     let funds = await _lightning.listfunds();
-    let availableBalance = funds.outputs.forEach(output => {
-        availableFunds = availableFunds + output.value;
+    let availableBalance = 0;
+    funds.outputs.forEach(output => {
+        availableBalance += output.value;
     });
     if (availableBalance < 0 || availableBalance == null)
         availableBalance = 0;
